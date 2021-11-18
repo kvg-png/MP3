@@ -1,0 +1,70 @@
+df_print: default
+highlight: tango
+number_sections: yes
+theme: cosmo
+toc: yes
+toc_depth: 2
+toc_float:
+  collapsed: no
+---
+  
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+# Set R chunk default options:
+# -do not output all R messages in html report
+# -do not output all R warnings in html report
+# -set default figure widths and heights for all code blocks, unless you 
+#  override them
+knitr::opts_chunk$set(
+  message = FALSE, warning = FALSE, fig.width = 16/2, fig.height = 9/2
+)
+```
+
+```{r, echo=FALSE}
+# Load all packages here. It's good practice to load all packages at the
+# beginning of a Rmd file so that collaborators can see in one shot all packages
+# they'll need installed:
+# install.packages("remotes")
+library(devtools)
+remotes::install_github("mfherman/nycgeo")
+library(nycgeo)
+#> To work with the spatial data included in this package, you should also load the {sf} package with library(sf).
+library(tidyverse)
+library(leaflet)
+library(sf)
+library(maps)
+
+# USA specific data
+library(tidycensus)
+library(tmaptools)
+```
+
+Reading our dataset:
+
+```{r}
+
+nycaccidents2020 <- read.csv(file = 'NYC Accidents 2020.csv')
+census_tracts <- st_read("cb_2018_36_tract_500k.shp", quiet = TRUE)
+
+nycaccidents2020_sf <- nycaccidents2020 %>%
+  filter(!is.na(LATITUDE), !is.na(LONGITUDE)) %>%
+  st_as_sf(coords = c("LONGITUDE", "LATITUDE"), crs = st_crs(census_tracts))
+
+
+nyc_boundaries(geography = "tract")
+
+bk_qn_tracts <- nyc_boundaries(
+  geography = "puma"
+  )
+
+ggplot(bk_qn_tracts) +
+  geom_sf() +
+  theme_minimal() 
+
+```
+
+
+Map of the NYC boroughs:
+```{r}
+
+
+```
